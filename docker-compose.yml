@@ -53,7 +53,7 @@ services:
       start_period: 20s
 
   redis:
-    image: redis:8.6-alpine
+    image: redis:8.6-alpine@sha256:2cc044fc5a07c9b701f8f1255a309ae9ad7856e694ac03513bf3648c01e40763
     restart: always
     networks:
       - internal
