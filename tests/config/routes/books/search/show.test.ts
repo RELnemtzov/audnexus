@@ -90,6 +90,13 @@ describe('GET /books/search', () => {
 		expect(mockConstructor).not.toHaveBeenCalled()
 	})
 
+	it('returns 400 when region is repeated (array)', async () => {
+		const reply = makeReply()
+		await getHandler(app)({ query: { q: 'carl', region: ['us', 'uk'] }, log: mockLog }, reply)
+		expect(reply.code).toHaveBeenCalledWith(400)
+		expect(mockConstructor).not.toHaveBeenCalled()
+	})
+
 	it('returns 400 for unknown region', async () => {
 		const reply = makeReply()
 		await getHandler(app)({ query: { q: 'test', region: 'zz' }, log: mockLog }, reply)
