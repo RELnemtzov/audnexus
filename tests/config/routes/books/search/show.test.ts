@@ -3,9 +3,13 @@ import { afterAll, beforeEach, describe, expect, it, mock } from 'bun:test'
 import _show from '#config/routes/books/search/show'
 
 const mockParseResults = mock()
+const mockConstructor = mock()
 
 mock.module('#helpers/books/audible/BookSearchApiHelper', () => ({
 	default: class MockBookSearchApiHelper {
+		constructor(...args: unknown[]) {
+			mockConstructor(...args)
+		}
 		parseResults = mockParseResults
 	}
 }))
@@ -40,6 +44,7 @@ describe('GET /books/search', () => {
 
 	beforeEach(async () => {
 		mockParseResults.mockReset()
+		mockConstructor.mockReset()
 		app = makeApp()
 		await _show(app as never)
 	})
@@ -74,8 +79,15 @@ describe('GET /books/search', () => {
 		mockParseResults.mockResolvedValue([])
 		const reply = makeReply()
 		await getHandler(app)({ query: { q: '  carl  ' }, log: mockLog }, reply)
-		expect(mockParseResults).toHaveBeenCalled()
+		expect(mockConstructor).toHaveBeenCalledWith('carl', 'us', mockLog)
 		expect(reply.code).not.toHaveBeenCalledWith(400)
+	})
+
+	it('returns 400 when q is repeated (array)', async () => {
+		const reply = makeReply()
+		await getHandler(app)({ query: { q: ['carl', 'donut'] }, log: mockLog }, reply)
+		expect(reply.code).toHaveBeenCalledWith(400)
+		expect(mockConstructor).not.toHaveBeenCalled()
 	})
 
 	it('returns 400 for unknown region', async () => {
@@ -87,7 +99,7 @@ describe('GET /books/search', () => {
 	it('defaults region to us when not provided', async () => {
 		mockParseResults.mockResolvedValue([])
 		await getHandler(app)({ query: { q: 'test' }, log: mockLog }, makeReply())
-		expect(mockParseResults).toHaveBeenCalled()
+		expect(mockConstructor).toHaveBeenCalledWith('test', 'us', mockLog)
 	})
 })
 

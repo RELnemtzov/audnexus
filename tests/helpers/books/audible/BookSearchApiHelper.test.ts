@@ -1,6 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it, mock } from 'bun:test'
 
 import BookSearchApiHelper from '#helpers/books/audible/BookSearchApiHelper'
+import { createMockLogger } from '#tests/setup/mockLogger'
 
 const mockFetch = mock()
 
@@ -15,12 +16,7 @@ mock.module('#helpers/books/audible/ApiHelper', () => ({
 	}
 }))
 
-const mockLogger = {
-	error: mock(),
-	info: mock(),
-	debug: mock(),
-	warn: mock()
-}
+const mockLogger = createMockLogger()
 
 const minimalProduct = {
 	asin: 'B08V8B2CGV',

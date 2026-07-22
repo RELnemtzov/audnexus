@@ -1,8 +1,7 @@
 import type { FastifyBaseLogger } from 'fastify'
 
-import ApiHelper from './ApiHelper'
-
 import { ApiBook, AudibleProduct } from '#config/types'
+import ApiHelper from '#helpers/books/audible/ApiHelper'
 import fetch from '#helpers/utils/fetchPlus'
 import SharedHelper from '#helpers/utils/shared'
 import { ErrorMessageHTTPFetch } from '#static/messages'
